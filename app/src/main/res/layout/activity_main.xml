@@ -67,16 +67,54 @@
         android:textColor="#ff6600"
         android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/customerContactTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/contactParent"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="Huidige klant:"
-        android:textColor="#ffffff"
-        android:textSize="18sp"
-        android:visibility="gone" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="21dp"
+        android:background="#252830"
+        android:padding="0dp"
+        android:visibility="gone"
+        tools:context=".MainActivity">
+
+        <TextView
+            android:id="@+id/customerContactTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="Huidige klant:"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/currentContractTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="Selecteer een contract"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:visibility="visible" />
+
+        <Spinner
+            android:id="@+id/currentContract"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="18dp"
+            android:background="#d3d3d3"
+            android:padding="5dp"
+            android:textSize="18sp"
+            android:visibility="visible" />
+
+    </RelativeLayout>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"

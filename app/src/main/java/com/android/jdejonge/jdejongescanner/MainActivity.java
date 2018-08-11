@@ -11,6 +11,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,6 +29,7 @@ import com.android.jdejonge.jdejongescanner.model.ContItem;
 import com.android.jdejonge.jdejongescanner.model.CustomerContact;
 import com.android.jdejonge.jdejongescanner.model.Status;
 import com.android.jdejonge.jdejongescanner.model.Stock;
+import com.android.jdejonge.jdejongescanner.model.Contract;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -57,6 +59,7 @@ import org.w3c.dom.Text;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -68,7 +71,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.R.id.message;
 
-public class MainActivity extends Activity implements EMDKListener, com.symbol.emdk.barcode.Scanner.DataListener, com.symbol.emdk.barcode.Scanner.StatusListener, ScannerConnectionListener, CompoundButton.OnCheckedChangeListener {
+public class MainActivity extends Activity implements
+        EMDKListener,
+        com.symbol.emdk.barcode.Scanner.DataListener,
+        com.symbol.emdk.barcode.Scanner.StatusListener,
+        ScannerConnectionListener,
+        CompoundButton.OnCheckedChangeListener,
+        AdapterView.OnItemSelectedListener
+{
 
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final String BASE_URL = "http://192.168.192.23:8080/";
@@ -111,6 +121,9 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
     private EditText contItemQuantity;
     private EditText stockItemSearchInput;
     private RelativeLayout contItemQuantityParent;
+    private RelativeLayout contactParent;
+    private Spinner currentContract;
+    private TextView currentContractTextView;
 
     private Gson gson;
     private Retrofit retrofit;
@@ -118,6 +131,7 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
 
     private CustomerContact currentCustomerContact;
     private Stock currentStock;
+    private HashMap<String, Contract> contractMap = new HashMap<String, Contract>();
 
     private int scanAction;
     private Boolean pauseScanProcessing;
@@ -162,6 +176,11 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
         stopScanButton = (Button) findViewById(R.id.stopScanButton);
         manualInputButton = (Button) findViewById(R.id.manualInputButton);
         manualStockSearchButton = (Button) findViewById(R.id.manualStockSearchButton);
+
+        contactParent = (RelativeLayout) findViewById(R.id.contactParent);
+        currentContract = (Spinner)findViewById(R.id.currentContract);
+        currentContract.setOnItemSelectedListener(this);
+        currentContractTextView = (TextView) findViewById(R.id.currentContractTextView);
 
         gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
@@ -242,6 +261,7 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
                 contItemQuantity.setVisibility(View.GONE);
                 pullFromRentButton.setVisibility(View.GONE);
                 quantityTextView.setVisibility(View.GONE);
+                contactParent.setVisibility(View.GONE);
 
                 scanAction = SCAN_ACTION_FIND_CUSTOMER;
 
@@ -332,7 +352,7 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
                 String searchString = stockItemSearchInput.getText().toString();
                 stockItemSearchInput.setText("");
 
-                informationTextView.setText("Ophalen klant met referentie " + searchString + "...");
+                informationTextView.setText("Ophalen artikel met code " + searchString + "...");
                 getStockItem(searchString);
             }
         };
@@ -833,10 +853,12 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
                     if (stock.STATUS == Stock.STATUS_AVAILABLE) {
                         // show put in rental button
                         contItemQuantity.setText(String.valueOf(DEFAULT_QUANTITY));
+                        contItemQuantityParent.setVisibility(View.VISIBLE);
                         putInRentButton.setVisibility(View.VISIBLE);
                     } else if (stock.STATUS == Stock.STATUS_IN_RENT) {
                         // show pull from rental button if we have a ContItem
                         if (stock.CONTITEM != null) {
+                            contItemQuantityParent.setVisibility(View.VISIBLE);
                             pullFromRentButton.setVisibility(View.VISIBLE);
 
                             if (stock.UNIQUE == 0) {
@@ -844,6 +866,8 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
                                 informationTextView.setText(stock.DESC1 + " (" + stock.ITEMNO + ") - " + stock.CONTITEM.QTY + " stuk(s)");
                             }
                         } else {
+                            pullFromRentButton.setVisibility(View.GONE);
+
                             // bulk item, can be rented multiple times
                             if (stock.UNIQUE == 0) {
                                 // show put in rental button
@@ -854,7 +878,8 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
                                 contItemQuantity.setVisibility(View.VISIBLE);
                                 quantityTextView.setVisibility(View.VISIBLE);
                             } else {
-                                Toast.makeText(getApplicationContext(), "Product verhuurd aan andere klant", Toast.LENGTH_LONG).show();
+
+                                Toast.makeText(getApplicationContext(), "Product verhuurd onder ander contract", Toast.LENGTH_LONG).show();
                             }
                         }
                     } else {
@@ -895,6 +920,8 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
     private void getCustomerContact(final String reference) {
         Log.d(TAG, "About to fetch Customer!");
 
+        currentStock = null;
+
         Call<CustomerContact> call = insphire.getCustomerContact(authHeader, reference);
         call.enqueue(new Callback<CustomerContact>() {
             @Override
@@ -906,18 +933,18 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
                 CustomerContact customer = response.body();
 
                 if (statusCode == HttpURLConnection.HTTP_OK) {
-                    if (customer.CONTNO != null) {
+                    if (customer.CONTRACTS.length > 0) {
                         currentCustomerContact = customer;
+                        customerContactTextView.setText("Huidige klant: " + customer.NAME);
+                        updateContractsSpinner(customer);
+                        contactParent.setVisibility(View.VISIBLE);
 
-                        customerContactTextView.setVisibility(View.VISIBLE);
-                        customerContactTextView.setText("Huidige klant: " + customer.NAME + " (" + customer.CONTNO + ")");
                         informationTextView.setText("Scan een artikel");
-
                         findStockButton.setVisibility(View.VISIBLE);
                     } else {
                         currentCustomerContact = null;
                         customerContactTextView.setText("Kies een andere klant");
-                        Toast.makeText(getApplicationContext(), "Klant heeft geen contract", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Klant heeft geen actieve contract(en)", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     informationTextView.setText("");
@@ -942,6 +969,30 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
                 Log.d(TAG, msg);
             }
         });
+    }
+
+    private void updateContractsSpinner(CustomerContact customer)
+    {
+        // Spinner Drop down elements
+        List<String> contracts = new ArrayList<>();
+
+        for (int i = 0; i < customer.CONTRACTS.length; i++) {
+            Contract contract = customer.CONTRACTS[i];
+            contracts.add(contract.THEIRREF);
+
+            contractMap.put(contract.THEIRREF, contract);
+        }
+
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getBaseContext(),
+                android.R.layout.simple_spinner_item, contracts);
+
+        // Drop down layout style - list view with radio button
+        dataAdapter
+                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        currentContract.setAdapter(dataAdapter);
     }
 
     private void updateStockStatus(String itemno, final int status, final int qty) {
@@ -1084,5 +1135,26 @@ public class MainActivity extends Activity implements EMDKListener, com.symbol.e
 
     private void showAPIFailureMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String contractRef = currentContract.getSelectedItem().toString();
+        Contract contract= contractMap.get(contractRef);
+
+        currentCustomerContact.CONTNO   = contract.CONTNO;
+        currentCustomerContact.ESTRETD  = contract.ESTRETD;
+
+        // refetch article
+        if (currentStock != null) {
+            informationTextView.setText("Opnieuw ophalen van artikel met code " + currentStock.ITEMNO + "...");
+            pauseScanProcessing = true;
+            getStockItem(currentStock.ITEMNO);
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // TODO Auto-generated method stub
     }
 }

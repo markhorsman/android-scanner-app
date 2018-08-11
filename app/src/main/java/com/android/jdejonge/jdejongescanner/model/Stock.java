@@ -25,5 +25,6 @@ public class Stock {
     public String NLCODE;
     public ContItem CONTITEM;
     public int UNIQUE;
+    public int QTYHIRE;
     public Boolean IN_RENT_BY_CUSTOMER;
 }

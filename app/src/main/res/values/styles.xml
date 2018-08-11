@@ -17,4 +17,11 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="SpinnerThemeLight" >
+        <item name="android:colorBackground">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">#ffffff</item>
+        <item name="android:textColorSecondary">#ffffff</item>
+        <item name="android:textColorTertiary">#ffffff</item>
+    </style>
+
 </resources>

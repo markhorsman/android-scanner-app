@@ -1,5 +1,7 @@
 package com.android.jdejonge.jdejongescanner.model;
 
+import java.lang.reflect.Array;
+
 public class CustomerContact {
 
     public String RECID;
@@ -14,6 +16,7 @@ public class CustomerContact {
     public String TELEPHONE;
     public String EMAIL;
     public String REFERENCE;
+    public Contract[] CONTRACTS;
     public String CONTNO;
     public String ESTRETD;
 }
