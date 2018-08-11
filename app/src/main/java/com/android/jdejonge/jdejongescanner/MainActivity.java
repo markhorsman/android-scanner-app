@@ -1,6 +1,7 @@
 package com.android.jdejonge.jdejongescanner;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 //import android.support.design.widget.Snackbar;
@@ -124,6 +125,7 @@ public class MainActivity extends Activity implements
     private RelativeLayout contactParent;
     private Spinner currentContract;
     private TextView currentContractTextView;
+    private Button overviewButton;
 
     private Gson gson;
     private Retrofit retrofit;
@@ -181,6 +183,7 @@ public class MainActivity extends Activity implements
         currentContract = (Spinner)findViewById(R.id.currentContract);
         currentContract.setOnItemSelectedListener(this);
         currentContractTextView = (TextView) findViewById(R.id.currentContractTextView);
+        overviewButton = (Button) findViewById(R.id.overviewButton);
 
         gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
@@ -252,7 +255,7 @@ public class MainActivity extends Activity implements
             @Override
             public void onClick(View v) {
                 // reset fields and textview
-                informationTextView.setText("Scan een barcode");
+                informationTextView.setText("Scan een QR code");
 
                 fetchCustomerButton.setVisibility(View.GONE);
                 findStockButton.setVisibility(View.GONE);
@@ -357,6 +360,15 @@ public class MainActivity extends Activity implements
             }
         };
 
+        View.OnClickListener overviewButtonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(), ContItemsActivity.class);
+                i.putExtra("Reference", currentCustomerContact.REFERENCE);
+                startActivity(i);
+            }
+        };
+
         fetchCustomerButton.setOnClickListener(fetchCustomerButtonListener);
         findStockButton.setOnClickListener(stockButtonListener);
         putInRentButton.setOnClickListener(putInRentButtonListener);
@@ -364,6 +376,7 @@ public class MainActivity extends Activity implements
         stopScanButton.setOnClickListener(stopScanButtonListener);
         manualInputButton.setOnClickListener(manualInputButtonListener);
         manualStockSearchButton.setOnClickListener(manualStockSearchButtonListener);
+        overviewButton.setOnClickListener(overviewButtonListener);
     }
 
     @Override

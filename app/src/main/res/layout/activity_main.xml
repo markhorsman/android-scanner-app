@@ -15,7 +15,7 @@
         android:layout_alignParentLeft="true"
 
         android:layout_alignParentTop="true"
-        android:layout_marginTop="187dp"
+        android:layout_marginTop="135dp"
         android:text="Scan een klant om te beginnen"
         android:textColor="#ffffff"
         android:textSize="24sp" />
@@ -71,10 +71,10 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/contactParent"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="180dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="21dp"
+        android:layout_marginBottom="30dp"
         android:background="#252830"
         android:padding="0dp"
         android:visibility="gone"
@@ -96,7 +96,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="43dp"
             android:text="Selecteer een contract"
             android:textColor="#ffffff"
             android:textSize="18sp"
@@ -106,12 +107,22 @@
             android:id="@+id/currentContract"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:layout_marginBottom="18dp"
+            android:layout_centerVertical="true"
             android:background="#d3d3d3"
             android:padding="5dp"
             android:textSize="18sp"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/overviewButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:background="#202428"
+            android:text="Overzicht in huur"
+            android:textColor="#ff6600"
             android:visibility="visible" />
 
     </RelativeLayout>
