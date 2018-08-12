@@ -365,6 +365,7 @@ public class MainActivity extends Activity implements
             public void onClick(View v) {
                 Intent i = new Intent(getBaseContext(), ContItemsActivity.class);
                 i.putExtra("Reference", currentCustomerContact.REFERENCE);
+                i.putExtra("CustomerName", currentCustomerContact.NAME);
                 startActivity(i);
             }
         };

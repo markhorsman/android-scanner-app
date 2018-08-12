@@ -1,5 +1,6 @@
 package com.android.jdejonge.jdejongescanner.api;
 
+import com.android.jdejonge.jdejongescanner.model.ContItemsInRent;
 import com.android.jdejonge.jdejongescanner.model.CustomerContact;
 import com.android.jdejonge.jdejongescanner.model.Status;
 import com.android.jdejonge.jdejongescanner.model.Stock;
@@ -25,6 +26,9 @@ public interface Insphire {
 
     @GET("customer/{reference}")
     Call<CustomerContact> getCustomerContact(@Header("Authorization") String authHeader, @Path("reference") String reference);
+
+    @GET("contitems/{reference}")
+    Call<ContItemsInRent> getContItemsInRent(@Header("Authorization") String authHeader, @Path("reference") String reference);
 
     @PUT("stock/status/{itemno}/{contno}/{reference}/{qty}")
     Call<Status> updateStockStatus(

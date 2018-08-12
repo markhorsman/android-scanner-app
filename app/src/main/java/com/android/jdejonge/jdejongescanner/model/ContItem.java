@@ -9,6 +9,7 @@ public class ContItem {
     public static final int STATUS_COMPLETED = 4;
     public static final int STATUS_CANCELED = 9;
 
+    public String RECID;
     public String CONTNO;
     public String ACCT;
     public int TYPE;
@@ -17,4 +18,5 @@ public class ContItem {
     public int QTY;
     public double DISCOUNT;
     public int STATUS;
+    public String THEIRREF;
 }
