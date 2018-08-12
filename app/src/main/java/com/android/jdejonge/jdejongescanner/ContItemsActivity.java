@@ -34,19 +34,13 @@ public class ContItemsActivity extends Activity {
     private Button backToMainButton;
     private TextView customerContactName;
     private TableLayout contItemsInRent;
-//    private TableLayout contItemsInRentHead;
 
     private Gson gson;
     private Retrofit retrofit;
     private Insphire insphire;
 
     private static final String TAG = ContItemsActivity.class.getSimpleName();
-    public static final String BASE_URL = "http://192.168.192.23:8080/";
-
-    private final String username = "jdejong";
-    private final String password = "insphire";
-    private String base = username + ":" + password;
-    private String authHeader = "Basic " + Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
+    private String authHeader;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +49,6 @@ public class ContItemsActivity extends Activity {
         backToMainButton = (Button) findViewById(R.id.backToMainButton);
         customerContactName = (TextView) findViewById(R.id.customerContactName);
         contItemsInRent = (TableLayout) findViewById(R.id.contItemsInRent);
-//        contItemsInRentHead = (TableLayout) findViewById(R.id.contItemsInRentHead);
 
         View.OnClickListener backToMainButtonListener = new View.OnClickListener() {
             @Override
@@ -66,12 +59,18 @@ public class ContItemsActivity extends Activity {
 
         backToMainButton.setOnClickListener(backToMainButtonListener);
 
+        String apiUrl   = Helper.getConfigValue(this, "api_url");
+        String apiUser  = Helper.getConfigValue(this, "api_user");
+        String apiPass  = Helper.getConfigValue(this, "api_pass");
+        String authBase = apiUser + ":" + apiPass;
+        authHeader = "Basic " + Base64.encodeToString(authBase.getBytes(), Base64.NO_WRAP);
+
         gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(apiUrl)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -151,7 +150,6 @@ public class ContItemsActivity extends Activity {
                     }
 
                     customerContactName.setVisibility(View.VISIBLE);
-//                    contItemsInRentHead.setVisibility(View.VISIBLE);
                     contItemsInRent.setVisibility(View.VISIBLE);
 
                 } else {

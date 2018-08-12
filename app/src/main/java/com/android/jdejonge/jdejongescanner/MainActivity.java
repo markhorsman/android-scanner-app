@@ -1,7 +1,9 @@
 package com.android.jdejonge.jdejongescanner;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 //import android.support.design.widget.Snackbar;
@@ -58,11 +60,14 @@ import com.symbol.emdk.barcode.StatusData;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -88,10 +93,14 @@ public class MainActivity extends Activity implements
     private static final int SCAN_ACTION_FIND_CUSTOMER = 1;
     private static final int SCAN_ACTION_FIND_STOCK = 2;
 
-    private final String username = "jdejong";
-    private final String password = "insphire";
-    private String base = username + ":" + password;
-    private String authHeader = "Basic " + Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
+//    private final String username = "jdejong";
+//    private final String password = "insphire";
+//    private String base = username + ":" + password;
+//    private String authHeader = "Basic " + Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
+
+//    private String apiUsername;
+//    private String apiPassword;
+    private String authHeader;
 
     private EMDKManager emdkManager = null;
     private BarcodeManager barcodeManager = null;
@@ -185,12 +194,18 @@ public class MainActivity extends Activity implements
         currentContractTextView = (TextView) findViewById(R.id.currentContractTextView);
         overviewButton = (Button) findViewById(R.id.overviewButton);
 
+        String apiUrl   = Helper.getConfigValue(this, "api_url");
+        String apiUser  = Helper.getConfigValue(this, "api_user");
+        String apiPass  = Helper.getConfigValue(this, "api_pass");
+        String authBase = apiUser + ":" + apiPass;
+        authHeader = "Basic " + Base64.encodeToString(authBase.getBytes(), Base64.NO_WRAP);
+
         gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(apiUrl)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
