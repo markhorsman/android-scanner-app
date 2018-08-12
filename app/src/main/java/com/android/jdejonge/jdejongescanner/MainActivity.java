@@ -1,28 +1,20 @@
 package com.android.jdejonge.jdejongescanner;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
-//import android.support.design.widget.Snackbar;
-//import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.text.InputType;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,31 +43,23 @@ import com.symbol.emdk.barcode.ScannerException;
 import com.symbol.emdk.barcode.ScannerInfo;
 import com.symbol.emdk.barcode.ScannerResults;
 import com.symbol.emdk.barcode.ScanDataCollection.ScanData;
-import com.symbol.emdk.barcode.Scanner.DataListener;
-import com.symbol.emdk.barcode.Scanner.StatusListener;
 import com.symbol.emdk.barcode.Scanner.TriggerType;
 import com.symbol.emdk.barcode.StatusData.ScannerStates;
 import com.symbol.emdk.barcode.StatusData;
 
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static android.R.id.message;
 
 public class MainActivity extends Activity implements
         EMDKListener,
@@ -87,19 +71,11 @@ public class MainActivity extends Activity implements
 {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    public static final String BASE_URL = "http://192.168.192.23:8080/";
     public final int DEFAULT_QUANTITY = 1;
 
     private static final int SCAN_ACTION_FIND_CUSTOMER = 1;
     private static final int SCAN_ACTION_FIND_STOCK = 2;
 
-//    private final String username = "jdejong";
-//    private final String password = "insphire";
-//    private String base = username + ":" + password;
-//    private String authHeader = "Basic " + Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
-
-//    private String apiUsername;
-//    private String apiPassword;
     private String authHeader;
 
     private EMDKManager emdkManager = null;

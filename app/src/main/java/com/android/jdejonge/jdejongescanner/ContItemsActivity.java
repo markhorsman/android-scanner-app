@@ -22,7 +22,6 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
