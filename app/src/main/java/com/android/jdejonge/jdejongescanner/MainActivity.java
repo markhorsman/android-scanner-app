@@ -355,7 +355,6 @@ public class MainActivity extends Activity implements
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getBaseContext(), ContItemsActivity.class);
-                i.putExtra("Reference", currentCustomerContact.REFERENCE);
                 i.putExtra("CustomerName", currentCustomerContact.NAME);
                 startActivity(i);
             }
@@ -834,7 +833,7 @@ public class MainActivity extends Activity implements
     private void getStockItem(final String barcode) {
         Log.d(TAG, "About to fetch Stock item!");
 
-        Call<Stock> call = insphire.getStockItem(authHeader, barcode, currentCustomerContact.CONTNO, currentCustomerContact.ACCT, currentCustomerContact.REFERENCE);
+        Call<Stock> call = insphire.getStockItem(authHeader, barcode, currentCustomerContact.CONTNO, currentCustomerContact.ACCT, currentCustomerContact.NAME);
         call.enqueue(new Callback<Stock>() {
             @Override
             public void onResponse(Call<Stock> call, Response<Stock> response) {
@@ -1008,7 +1007,7 @@ public class MainActivity extends Activity implements
                 authHeader,
                 itemno,
                 currentCustomerContact.CONTNO,
-                currentCustomerContact.REFERENCE,
+                currentCustomerContact.NAME,
                 qty,
                 currentStock
         );

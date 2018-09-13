@@ -15,27 +15,27 @@ import retrofit2.http.Path;
 
 public interface Insphire {
 
-    @GET("stock/{barcode}/{contno}/{acct}/{reference}")
+    @GET("stock/{barcode}/{contno}/{acct}/{customername}")
     Call<Stock> getStockItem(
             @Header("Authorization") String authHeader,
             @Path("barcode") String barcode,
             @Path("contno") String contno,
             @Path("acct") String acct,
-            @Path("reference") String reference
+            @Path("reference") String customerName
     );
 
     @GET("customer/{reference}")
     Call<CustomerContact> getCustomerContact(@Header("Authorization") String authHeader, @Path("reference") String reference);
 
-    @GET("contitems/{reference}")
-    Call<ContItemsInRent> getContItemsInRent(@Header("Authorization") String authHeader, @Path("reference") String reference);
+    @GET("contitems/{customername}")
+    Call<ContItemsInRent> getContItemsInRent(@Header("Authorization") String authHeader, @Path("reference") String customerName);
 
-    @PUT("stock/status/{itemno}/{contno}/{reference}/{qty}")
+    @PUT("stock/status/{itemno}/{contno}/{customername}/{qty}")
     Call<Status> updateStockStatus(
             @Header("Authorization") String authHeader,
             @Path("itemno") String itemno,
             @Path("contno") String contno,
-            @Path("reference") String reference,
+            @Path("reference") String customerName,
             @Path("qty") int qty,
             @Body Stock stock
     );

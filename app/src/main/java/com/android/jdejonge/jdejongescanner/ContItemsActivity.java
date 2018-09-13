@@ -78,16 +78,15 @@ public class ContItemsActivity extends Activity {
         Bundle extras = getIntent().getExtras();
 
         if(extras !=null) {
-            String reference = extras.getString("Reference");
             String customerName = extras.getString("CustomerName");
 
             customerContactName.setText(customerName);
-            getContItemsInRent(reference, customerName);
+            getContItemsInRent(customerName);
         }
     }
 
-    private void getContItemsInRent(final String reference, final String customerName) {
-        Call<ContItemsInRent> call = insphire.getContItemsInRent(authHeader, reference);
+    private void getContItemsInRent(final String customerName) {
+        Call<ContItemsInRent> call = insphire.getContItemsInRent(authHeader, customerName);
         call.enqueue(new Callback<ContItemsInRent>() {
             @Override
             public void onResponse(Call<ContItemsInRent> call, Response<ContItemsInRent> response) {
@@ -161,7 +160,7 @@ public class ContItemsActivity extends Activity {
                 String msg = t.getMessage();
 
                 if (t.getMessage() == null || msg.length() < 1) {
-                    msg = "Geen artikelen in huur gevonden vor klant met referentie: " + reference;
+                    msg = "Geen artikelen in huur gevonden voor klant: " + customerName;
                 }
 
                 showAPIFailureMessage(msg);
